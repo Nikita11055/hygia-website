@@ -99,6 +99,17 @@
       width: 18px;
       height: 2px;
       background: #fff;
+      transition: all 0.4s ease;
+    }
+
+    .nav-burger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(4px, 4px);
+    }
+    .nav-burger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .nav-burger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(4px, -4px);
     }
 
     @media (max-width: 768px) {
@@ -250,8 +261,10 @@
     document.querySelector(".apple-nav").appendChild(mobileMenu);
 
     burger.addEventListener("click", () => {
+      burger.classList.toggle("active");
       mobileMenu.classList.toggle("active");
     });
   </script>
+  <!-- Test-Änderung von fisun2004-del -->
 </body>
 </html>
