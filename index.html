@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hygia</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; scroll-behavior: smooth; background: #000; color: #fff; }
+    body { font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+    .apple-nav {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 44px;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: saturate(180%) blur(20px);
+      display: flex;
+      align-items: center;
+      z-index: 1000;
+      transition: background 0.3s ease;
+    }
+
+    .nav-container {
+      width: 100%;
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      justify-content: center; /* zentriert die Menülinks */
+      align-items: center;
+      position: relative;
+    }
+
+    .nav-logo {
+      position: absolute;
+      left: 1rem;
+    }
+
+    .nav-logo img { height: 20px; }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex: 1;
+    }
+
+    .nav-item { position: relative; }
+
+    /* Dropdown Menu */
+    .nav-item { position: relative; }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 44px;
+      left: 0;
+      background: #000;
+      padding: 0.5rem 1rem;
+      list-style: none;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .dropdown li { margin: 0.5rem 0; }
+
+    .dropdown a {
+      color: #fff;
+      font-size: 0.9rem;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .dropdown a:hover { color: #ff6600; }
+
+    .nav-item:hover .dropdown { display: block; }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 400;
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: #ff6600; }
+
+    .nav-burger {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .nav-burger span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-burger { display: flex; }
+    }
+
+    /* Mobile Dropdown */
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: #000;
+      position: absolute;
+      top: 44px; left: 0;
+      width: 100%;
+      padding: 1rem;
+    }
+
+    .mobile-menu.active { display: flex; }
+
+    .mobile-menu a {
+      color: #fff;
+      font-size: 1.2rem;
+      margin: 0.5rem 0;
+    }
+
+    section {
+      min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; padding: 4rem 2rem; position: relative;
+    }
+
+    #hero {
+      height: 100vh;
+      background-image: url('images/hero-theke.png');
+      background-position: center; background-size: cover; background-repeat: no-repeat;
+      position: relative; display: flex; justify-content: flex-end; align-items: flex-start; z-index: 2;
+      padding: 4rem;
+    }
+    #hero::after {
+      content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 120px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, #000 100%); z-index: 2;
+    }
+    #hero h1 {
+      position: absolute; right: 1rem; top: 12%; text-align: right;
+      font-size: 2.5rem; font-weight: 300; line-height: 1.6; color: #000;
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+    #hero h1 span { display: block; }
+    #hero h1 span:hover { color: #ff6600; text-shadow: 0 0 10px rgba(255, 102, 0, 0.8); }
+
+    #studios { display: flex; flex-direction: row; align-items: stretch; padding: 0; margin: 0; }
+    .studios-container { display: flex; flex-wrap: nowrap; width: 100%; }
+    .studio {
+      flex: 1 1 50%; max-width: 50%; display: flex; justify-content: center; align-items: center;
+      position: relative; color: #fff; text-align: center; min-height: 100vh;
+    }
+    .studio-content { position: relative; z-index: 2; max-width: 400px; }
+    .studio::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 22%;
+      background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0) 100%); z-index: 1; }
+    .studio h2 { font-size: 2rem; margin-bottom: 1rem; }
+    .studio p { margin-bottom: 1.5rem; }
+    .btn {
+      padding: 0.6rem 1.6rem; border: 1px solid #fff; border-radius: 50px;
+      font-size: 1rem; font-weight: 400; background: transparent;
+      letter-spacing: 0.5px; transition: all 0.3s ease;
+    }
+    .btn:hover { background: #fff; color: #000; }
+
+    .studio-achern {
+      background-image: url('images/wall-heimat-dark.jpg');
+      background-position: center; background-size: cover; background-repeat: no-repeat; position: relative;
+    }
+    .studio-buehl {
+      background-image: url('images/buehl-halle-dark.jpg');
+      background-position: center top; background-size: cover; background-repeat: no-repeat; position: relative;
+    }
+
+    @media (max-width: 900px) {
+      .studios-container { flex-direction: column; }
+      .studio { max-width: 100%; flex-basis: auto; height: 50vh; }
+    }
+  </style>
+</head>
+<body>
+  <header class="apple-nav">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <img src="images/logo.png" alt="Hygia Logo">
+      </div>
+      <nav class="nav-links">
+        <div class="nav-item">
+          <a href="#studios">Studios</a>
+          <ul class="dropdown">
+            <li><a href="achern.html">Achern</a></li>
+            <li><a href="buehl.html">Bühl</a></li>
+          </ul>
+        </div>
+        <a href="#physio">Physio</a>
+        <a href="#training">Training</a>
+        <a href="#kurse">Kurse</a>
+        <a href="#preise">Preise</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+      <div class="nav-burger" id="nav-burger">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </header>
+
+  <section id="hero">
+    <h1>
+      <span>FITNESS.</span>
+      <span>GESUNDHEIT.</span>
+      <span>PHYSIOTHERAPIE.</span>
+    </h1>
+  </section>
+
+  <section id="studios">
+    <div class="studios-container">
+      <div class="studio studio-achern">
+        <div class="studio-content">
+          <h2>Studio Achern</h2>
+          <p>Premium-Fitness mit Charakter und Schwarzwald-Feeling.</p>
+          <a href="achern.html" class="btn">Mehr erfahren</a>
+        </div>
+      </div>
+      <div class="studio studio-buehl">
+        <div class="studio-content">
+          <h2>Studio Bühl</h2>
+          <p>Moderne Ausstattung, offene Architektur und Wohlfühl-Atmosphäre.</p>
+          <a href="buehl.html" class="btn">Mehr erfahren</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const burger = document.getElementById("nav-burger");
+    const mobileMenu = document.createElement("div");
+    mobileMenu.classList.add("mobile-menu");
+    mobileMenu.innerHTML = `
+      <a href="#studios">Studios</a>
+      <a href="#physio">Physio</a>
+      <a href="#training">Training</a>
+      <a href="#kurse">Kurse</a>
+      <a href="#preise">Preise</a>
+      <a href="#kontakt">Kontakt</a>
+    `;
+    document.querySelector(".apple-nav").appendChild(mobileMenu);
+
+    burger.addEventListener("click", () => {
+      mobileMenu.classList.toggle("active");
+    });
+  </script>
+</body>
+</html>

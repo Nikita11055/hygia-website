@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hygia Loft</title>
+  <style>
+    /* Reset + Basis */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { height: 100%; font-family: Arial, sans-serif; scroll-behavior: smooth; background: #000; color: #fff; }
+
+    /* Header (minimalistisch) */
+    header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0.85rem;
+      z-index: 100000;
+    }
+    header .burger {
+      margin-left: auto; /* ensures it stays on the right even if logo disappears */
+    }
+    .logo { font-size: 1,5rem; font-weight: bold; }
+    .logo.hidden {
+      display: none;
+    }
+    .logo img {
+      height: 24px;
+      width: auto;
+      max-width: 70px;
+    }
+
+    @media (max-width: 1024px) {
+      .logo img {
+        height: 20px;
+        max-width: 60px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .logo img {
+        height: 18px;
+        max-width: 50px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo img {
+        height: 16px;
+        max-width: 45px;
+      }
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 2rem;
+      font-size: 1rem;
+      transition: color 0.3s;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    nav a:hover { 
+      color: #ff6600; 
+      background: rgba(255, 102, 0, 0.1);
+      padding-left: 0.5rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    /* Burger */
+    .burger {
+      cursor: pointer;
+      width: 24px;
+      height: 18px;
+      position: relative;
+    }
+
+    .burger span {
+      position: absolute;
+      left: 0;
+      width: 70%;
+      height: 1px;
+      background: #ff6600;
+      border-radius: 2px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .burger span:nth-child(1) { top: 5px; }
+    .burger span:nth-child(2) { top: 13px; }
+
+    .burger.active span:nth-child(1) {
+      top: 9px;
+      transform: rotate(45deg);
+    }
+    .burger.active span:nth-child(2) {
+      top: 9px;
+      transform: rotate(-45deg);
+    }
+
+    /* Ausklapp-Menü */
+    .nav-links {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000; /* komplett schwarz */
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding-left: 2rem;
+      padding-top: 4rem;
+      text-align: left;
+      transform: translate(-100%, -100%);
+      transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+      z-index: 9000; /* unter Burger-Menü */
+    }
+
+    .nav-links a {
+      color: #ff6600;
+      font-size: 2rem;
+      margin: 1rem 0;
+      text-decoration: none;
+      margin-left: 0;
+      text-align: left;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .nav-links.active {
+      top: 0;
+      left: 0;
+      transform: translate(0,0);
+    }
+    .nav-links.active a {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .nav-links.active a:nth-child(1) { transition-delay: 0.2s; }
+    .nav-links.active a:nth-child(2) { transition-delay: 0.35s; }
+    .nav-links.active a:nth-child(3) { transition-delay: 0.5s; }
+    .nav-links.active a:nth-child(4) { transition-delay: 0.65s; }
+    .nav-links.active a:nth-child(5) { transition-delay: 0.8s; }
+
+    /* Sektionen */
+    section {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    section h1 {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+    section p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      color: #aaa;
+    }
+
+    /* Hintergrundbilder für jede Sektion (Dummybilder einfügen) */
+    #hero { 
+      position: relative;
+      background: url('images/hero-theke.png') center/cover no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      width: 100%;
+    }
+    #hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 40%;
+      background: linear-gradient(to top, rgba(0,0,0,0) 0%, #000 100%);
+      pointer-events: none;
+    }
+    #hero::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -2%;
+      height: 15%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, #000 100%);
+      pointer-events: none;
+    }
+    #studios {
+      background: none;
+      background-color: #000; /* schwarzer Hintergrund, ohne Bild */
+    }
+    #physio { background: url('images/physio.jpg') center/cover no-repeat; }
+    #kurse { background: url('images/kurse.jpg') center/cover no-repeat; }
+    #preise { background: url('images/preise.jpg') center/cover no-repeat; }
+    #kontakt { background: url('images/kontakt.jpg') center/cover no-repeat; }
+
+    /* Overlay für bessere Lesbarkeit */
+    section::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: -1;
+    }
+
+    /* Buttons */
+    .btn {
+      margin-top: 2rem;
+      padding: 0.8rem 2rem;
+      border: 1px solid #fff;
+      background: transparent;
+      color: #fff;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn:hover { background: #ff6600; border-color: #ff6600; }
+
+    /* Adjusted hero h1 styles */
+    #hero h1 {
+      position: absolute;
+      right: 1rem;       /* ganz nah am rechten Rand */
+      top: 8%;          /* höher setzen, nahe der Decke über dem Lichtstrahl */
+      text-align: right;
+      font-size: 2.5rem; /* kleinere Schrift für dezenteren Look */
+      font-weight: 300; /* dünnere Schrift */
+      line-height: 1.6; /* mehr Abstand */
+      color: #000; /* changed from rgba(255, 102, 0, 0.8) to black */
+      letter-spacing: 1px; /* etwas luftiger */
+      text-transform: uppercase;
+    }
+    #hero h1 span {
+      display: block;
+      margin-bottom: 1.5rem;
+      transition: color 0.4s ease, text-shadow 0.4s ease;
+    }
+    #hero h1 span:hover {
+      color: #ff6600;
+      text-shadow: 0 0 10px rgba(255, 102, 0, 0.8);
+    }
+
+    .studios-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+    .studio {
+      flex: 1;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .studio-achern {
+      background: url('images/wall-heimat.png') center center no-repeat;
+      background-size: cover;
+      background-color: #000;
+    }
+    .studio-buehl {
+      background-image: url('images/slide4.jpg');
+    }
+    .studio .overlay {
+      background: rgba(0,0,0,0.5);
+      padding: 2rem;
+      text-align: center;
+      color: #fff;
+    }
+    .studio h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+    .studio .btn {
+      border: 1px solid #fff;
+      background: transparent;
+      color: #fff;
+      padding: 0.7rem 1.5rem;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+    .studio .btn:hover {
+      background: #ff6600;
+      border-color: #ff6600;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo"><img src="images/logo.png" alt="Hygia Loft Logo"></div>
+    <div class="burger" id="burger-menu">
+      <span></span>
+      <span></span>
+    </div>
+  </header>
+
+  <!-- Navigation (ausklappend) -->
+  <nav class="nav-links" id="nav-links">
+    <a href="#studios">Studios</a>
+    <a href="#physio">Physio</a>
+    <a href="#kurse">Kurse</a>
+    <a href="#preise">Preise</a>
+    <a href="#kontakt">Kontakt</a>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero">
+    <h1>
+      <span>FITNESS.</span>
+      <span>GESUNDHEIT.</span>
+      <span>PHYSIOTHERAPIE.</span>
+    </h1>
+  </section>
+
+  <!-- Studios -->
+  <section id="studios">
+    <div class="studios-container">
+      <div class="studio studio-achern">
+        <div class="overlay">
+          <h2>Studio Achern</h2>
+          <a href="achern.html" class="btn">Studio Achern</a>
+        </div>
+      </div>
+      <div class="studio studio-buehl">
+        <div class="overlay">
+          <h2>Studio Bühl</h2>
+          <a href="buehl.html" class="btn">Studio Bühl</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Physio -->
+  <section id="physio">
+    <h1>Physiotherapie</h1>
+    <p>In Achern – modernste Behandlung kombiniert mit Wohlfühl-Atmosphäre.</p>
+    <button class="btn">Mehr erfahren</button>
+  </section>
+
+  <!-- Kurse -->
+  <section id="kurse">
+    <h1>Training & Kurse</h1>
+    <p>Von Functional Training bis Yoga – ein vielseitiges Programm für alle Ziele.</p>
+    <button class="btn">Zum Kursplan</button>
+  </section>
+
+  <!-- Preise -->
+  <section id="preise">
+    <h1>Preise</h1>
+    <p>Fair, transparent und flexibel – unser Angebot für deine Gesundheit.</p>
+    <button class="btn">Preise ansehen</button>
+  </section>
+
+  <!-- Kontakt -->
+  <section id="kontakt">
+    <h1>Kontakt & Standorte</h1>
+    <p>Besuche uns in Achern oder Bühl. Wir freuen uns auf dich!</p>
+    <button class="btn">Jetzt kontaktieren</button>
+  </section>
+</body>
+  <script>
+    const burger = document.getElementById("burger-menu");
+    const nav = document.getElementById("nav-links");
+    const logo = document.querySelector(".logo");
+    burger.addEventListener("click", () => {
+      nav.classList.toggle("active");
+      burger.classList.toggle("active");
+      logo.classList.toggle("hidden");
+      if (!nav.classList.contains("active")) {
+        const links = nav.querySelectorAll("a");
+        links.forEach(link => {
+          link.style.transitionDelay = "0s";
+        });
+      }
+    });
+  </script>
+</html>
