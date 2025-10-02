@@ -1,0 +1,24 @@
+name: Autopush Test
+
+# Wann der Workflow startet:
+on:
+  workflow_dispatch:   # manuell starten über GitHub-UI
+
+jobs:
+  autopush:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Add Test File
+        run: |
+          echo "Autopush Test erfolgreich! 🚀" > autopush-test.txt
+
+      - name: Commit & Push
+        run: |
+          git config --global user.name "hygia-bot"
+          git config --global user.email "hygia-bot@example.com"
+          git add .
+          git commit -m "Autopush-Test: Datei hinzugefügt"
+          git push
